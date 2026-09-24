@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projects | Fiza Khan</title>
+<meta name="description" content="Projects by Fiza Khan.">
+<meta name="theme-color" content="#030817">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=3">
+<style>
+  body.plain { background: radial-gradient(900px 520px at 12% -8%, rgba(77,141,255,.16), transparent 62%), #060d24; }
+  #proj > div { width: min(820px, 100%); }
+  .plist { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--edge); }
+  .prow {
+    display: flex; align-items: center; gap: 24px; padding: 28px 10px; border-bottom: 1px solid var(--edge);
+    transition: background .25s ease;
+  }
+  .prow:hover { background: rgba(255,255,255,.05); }
+  .pthumb { flex: none; width: 112px; height: 112px; border-radius: 50%; overflow: hidden; }
+  .pthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pbody { flex: 1; min-width: 0; }
+  .pbody h3 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -.01em; }
+  #proj .pdesc { margin: 6px 0 0; font-size: 1rem; line-height: 1.55; }
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .stack span { padding: 4px 12px; border-radius: 999px; font-size: .85rem; font-weight: 500; border: 1px solid var(--edge); color: var(--ink-soft); }
+  #proj .pstatus { margin: 12px 0 0; font-size: .92rem; }
+  .pgo {
+    flex: none; padding: 10px 20px; border-radius: 999px; font-weight: 600; font-size: .95rem; color: var(--ink);
+    text-decoration: none; border: 1px solid rgba(77,141,255,.7); background: rgba(77,141,255,.16);
+    transition: background .2s ease, transform .2s ease;
+  }
+  .pgo:hover { background: rgba(77,141,255,.4); transform: translateY(-2px); }
+  @media (max-width: 640px) {
+    .prow { flex-direction: column; align-items: flex-start; gap: 16px; padding: 22px 4px; }
+    .pthumb { width: 88px; height: 88px; }
+  }
+</style>
+</head>
+<body class="plain">
+
+<button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span></button>
+<nav class="menu" id="menu" aria-label="Site menu">
+  <a class="pill" style="--i:0" href="index.html#home">home</a>
+  <a class="pill" style="--i:1" href="about.html">about</a>
+  <a class="pill" style="--i:2" href="projects.html">projects</a>
+  <a class="pill" style="--i:3" href="hackathon.html">hackathon</a>
+  <a class="pill" style="--i:4" href="index.html#soon">coming soon</a>
+</nav>
+
+<main class="page" id="proj"><div>
+  <h2>projects</h2>
+
+  <!-- To add a project, copy one <li class="prow"> block and change the image, name, text and link. -->
+  <ul class="plist">
+    <li class="prow">
+      <div class="pthumb"><img src="swapqr-logo.jpg" alt="SwapQR logo"></div>
+      <div class="pbody">
+        <h3>SwapQR</h3>
+        <p class="pdesc">An app that turns your contact details into a QR code. Others scan it to save your contact instantly, with no typing.</p>
+        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span></div>
+      </div>
+      <a class="pgo" href="https://swapqrr.vercel.app/" target="_blank" rel="noopener">Visit site</a>
+    </li>
+  </ul>
+</div></main>
+
+<script>
+(() => {
+  const btn = document.getElementById('menuBtn');
+  const set = o => {
+    document.body.classList.toggle('open', o);
+    btn.setAttribute('aria-expanded', o);
+    btn.setAttribute('aria-label', o ? 'Close menu' : 'Open menu');
+  };
+  btn.addEventListener('click', () => set(!document.body.classList.contains('open')));
+  addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+  // "projects" is this page, so just close the menu
+  document.querySelector('.pill[href="projects.html"]').addEventListener('click', e => { e.preventDefault(); set(false); });
+})();
+</script>
+</body>
+</html>

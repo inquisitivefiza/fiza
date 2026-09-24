@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hackathons | Fiza Khan</title>
+<meta name="description" content="Hackathons Fiza Khan has competed in.">
+<meta name="theme-color" content="#030817">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=3">
+<style>
+  body.plain { background: radial-gradient(900px 520px at 12% -8%, rgba(77,141,255,.16), transparent 62%), #060d24; }
+  html { scroll-behavior: smooth; }
+  /* scroll fix: site.css centres .page vertically, which clips tall content at the top */
+  #hack { justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+  #hack > div { width: min(820px, 100%); margin: 0 auto; flex: none; }
+  #hack .lead { margin: 12px 0 0; }
+  .rows { list-style: none; margin: 44px 0 0; padding: 0; border-top: 1px solid var(--edge); }
+  .row {
+    display: flex; align-items: center; gap: 24px; padding: 26px 10px; border-bottom: 1px solid var(--edge);
+    transition: background .25s ease;
+    animation: rise .5s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i) * 100ms + 80ms);
+  }
+  .row:hover { background: rgba(255,255,255,.05); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  .year { flex: none; width: 88px; white-space: nowrap; font-weight: 600; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .what { flex: 1; min-width: 0; }
+  .what h3 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; }
+  #hack .what p { margin: 4px 0 0; font-size: 1rem; }
+  .result {
+    flex: none; padding: 7px 14px; border-radius: 999px; white-space: nowrap;
+    font-size: .9rem; font-weight: 600; border: 1px solid var(--edge);
+  }
+  .result.win { background: rgba(77,141,255,.22); border-color: rgba(77,141,255,.7); }
+  #hack .more { margin-top: 28px; }
+  @media (max-width: 600px) {
+    .row { flex-direction: column; align-items: flex-start; gap: 6px; padding: 20px 4px; }
+    .year { width: auto; }
+    .result { margin-top: 8px; }
+  }
+</style>
+</head>
+<body class="plain">
+
+<button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span></button>
+<nav class="menu" id="menu" aria-label="Site menu">
+  <a class="pill" style="--i:0" href="index.html#home">home</a>
+  <a class="pill" style="--i:1" href="about.html">about</a>
+  <a class="pill" style="--i:2" href="projects.html">projects</a>
+  <a class="pill" style="--i:3" href="hackathon.html">hackathon</a>
+  <a class="pill" style="--i:4" href="index.html#soon">coming soon</a>
+</nav>
+
+<main class="page" id="hack"><div>
+  <h2>hackathons</h2>
+  <p class="lead">Five hackathons since January 2025, with a first place at KIET's INNOTECH and fields of 50 to 100+ teams.</p>
+
+  <ol class="rows">
+    <li class="row" style="--i:0">
+      <span class="year">Jan 2026</span>
+      <div class="what"><h3>Sprint4Good AI Hackathon</h3><p>IIT Delhi</p></div>
+      <span class="result">50+ teams nationwide</span>
+    </li>
+    <li class="row" style="--i:1">
+      <span class="year">Nov 2025</span>
+      <div class="what"><h3>INNOTECH Hackathon</h3><p>KIET, departmental level</p></div>
+      <span class="result win">1st place</span>
+    </li>
+    <li class="row" style="--i:2">
+      <span class="year">Sep 2025</span>
+      <div class="what"><h3>Smart India Hackathon</h3><p>KIET, internal round</p></div>
+      <span class="result">Ranked 11th</span>
+    </li>
+    <li class="row" style="--i:3">
+      <span class="year">Apr 2025</span>
+      <div class="what"><h3>BitBox 5.0</h3><p>Jaypee 128 · 12-hour sprint</p></div>
+      <span class="result">50+ teams</span>
+    </li>
+    <li class="row" style="--i:4">
+      <span class="year">Jan 2025</span>
+      <div class="what"><h3>CodeWizard</h3><p>SRMIST, Delhi NCR</p></div>
+      <span class="result">100+ teams across Delhi NCR</span>
+    </li>
+  </ol>
+
+  <p class="more">More of what I build is on <a href="https://github.com/inquisitivefiza" target="_blank" rel="noopener">GitHub</a> and <a href="https://codolio.com/profile/Fiza312" target="_blank" rel="noopener">Codolio</a>.</p>
+</div></main>
+
+<script>
+(() => {
+  const btn = document.getElementById('menuBtn');
+  const set = o => {
+    document.body.classList.toggle('open', o);
+    btn.setAttribute('aria-expanded', o);
+    btn.setAttribute('aria-label', o ? 'Close menu' : 'Open menu');
+  };
+  btn.addEventListener('click', () => set(!document.body.classList.contains('open')));
+  addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+  // "hackathon" is this page, so just close the menu
+  document.querySelector('.pill[href="hackathon.html"]').addEventListener('click', e => { e.preventDefault(); set(false); });
+})();
+</script>
+</body>
+</html>
