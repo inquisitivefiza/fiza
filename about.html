@@ -4,7 +4,32 @@
 <title>About | Fiza Khan</title><meta name="theme-color" content="#17030d">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=1"></head>
+<link rel="stylesheet" href="site.css?v=1">
+<style>
+  /* Force left alignment, overriding any centering rules in site.css */
+  .page#about,
+  .about-grid,
+  .about-side,
+  .bio,
+  .bio h2,
+  .bio p,
+  .exp,
+  .edu-card,
+  .abtns {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .about-grid {
+    justify-content: flex-start !important;
+    justify-items: start !important;
+  }
+  .edu-card,
+  .abtn {
+    justify-self: start !important;
+  }
+</style>
+</head>
 <body class="plain">
 <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span></button>
 <nav class="menu" id="menu" aria-label="Site menu">
