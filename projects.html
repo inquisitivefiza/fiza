@@ -8,36 +8,152 @@
 <meta name="theme-color" content="#030817">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css?v=3">
 <style>
   body.plain { background: radial-gradient(900px 520px at 12% -8%, rgba(77,141,255,.16), transparent 62%), #060d24; }
-  #proj > div { width: min(820px, 100%); }
-  .plist { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--edge); }
+  #proj > div { width: min(920px, 100%); }
+
+  /* ---- header row ---- */
+  .proj-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .proj-count { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--ink-soft); letter-spacing: .02em; opacity: .75; }
+
+  /* ---- manifest list ---- */
+  .pmanifest { margin: 22px 0 0; border-top: 1px solid var(--edge); }
+
+  .prow { border-bottom: 1px solid var(--edge); position: relative; }
+
+  .prow summary {
+    list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px;
+    padding: 13px 6px 13px 15px; outline: none;
+  }
+  .prow summary::-webkit-details-marker { display: none; }
+  .prow summary::marker { content: ''; }
+
+  /* viewfinder brackets — the "lens" mark, appears on hover/focus/open */
+  .prow summary::before, .prow summary::after { content: none; }
   .prow {
-    display: flex; align-items: center; gap: 24px; padding: 28px 10px; border-bottom: 1px solid var(--edge);
-    transition: background .25s ease;
+    transition: background .15s ease, transform .15s ease;
+    animation: rowIn .5s cubic-bezier(.16,1,.3,1) backwards;
+    animation-delay: calc(var(--i, 0) * 55ms);
   }
-  .prow:hover { background: rgba(255,255,255,.05); }
-  .pthumb { flex: none; width: 112px; height: 112px; border-radius: 50%; overflow: hidden; }
-  .pthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .pbody { flex: 1; min-width: 0; }
-  .pbody h3 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -.01em; }
-  #proj .pdesc { margin: 6px 0 0; font-size: 1rem; line-height: 1.55; }
-  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-  .stack span { padding: 4px 12px; border-radius: 999px; font-size: .85rem; font-weight: 500; border: 1px solid var(--edge); color: var(--ink-soft); }
-  #proj .pstatus { margin: 12px 0 0; font-size: .92rem; }
+  @keyframes rowIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .prow { animation: none; } }
+  .prow:hover, .prow:focus-within, .prow[open] { background: rgba(77,141,255,.045); transform: translateX(2px); }
+
+  /* colour-coded accent bar — every row gets its project's hue, brightens on interaction */
+  .prow::before {
+    content: ''; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px; border-radius: 3px;
+    background: var(--rc, var(--accent)); opacity: .45;
+    transition: opacity .15s ease, width .15s ease;
+  }
+  .prow:hover::before, .prow:focus-within::before, .prow[open]::before { opacity: 1; width: 4px; }
+  .prow summary { position: relative; }
+  .prow summary .bracket { position: absolute; width: 8px; height: 8px; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+  .prow summary .bracket.tl { top: 4px; left: -1px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+  .prow summary .bracket.br { bottom: 4px; right: -1px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+  .prow:hover summary .bracket, .prow:focus-within summary .bracket, .prow[open] summary .bracket { opacity: .8; }
+
+  .prow-thumb { flex: none; width: 30px; height: 30px; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,.06); }
+  .prow-thumb img, .prow-thumb svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .prow-name { font-weight: 700; font-size: .92rem; letter-spacing: -.01em; flex: none; }
+
+  .pbadge {
+    font-size: .6rem; font-weight: 600; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid rgba(251,191,36,.4); background: rgba(251,191,36,.08); color: #fbbf24;
+    white-space: nowrap; flex: none;
+  }
+  .pbadge.release {
+    border-color: rgba(167,139,250,.45); background: rgba(167,139,250,.1); color: #a78bfa;
+  }
+  .pbadge.demo {
+    border-color: rgba(56,189,248,.45); background: rgba(56,189,248,.1); color: #38bdf8;
+  }
+
+  .prow-preview {
+    font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--ink-soft);
+    opacity: .6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex: 1 1 auto; min-width: 0;
+  }
+
+  .prow-chev {
+    flex: none; width: 16px; height: 16px; color: var(--ink-soft); opacity: .55;
+    transition: transform .18s ease;
+  }
+  .prow[open] .prow-chev { transform: rotate(180deg); }
+
+  .pbody { padding: 2px 6px 18px 53px; animation: pfade .18s ease; }
+  @keyframes pfade { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+
+  #proj .pdesc { margin: 0 0 12px; font-size: .84rem; line-height: 1.55; color: var(--ink-soft); text-align: left; max-width: 62ch; }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .stack span { padding: 2px 8px; border-radius: 999px; font-size: .66rem; font-weight: 500; font-family: 'JetBrains Mono', monospace; border: 1px solid var(--edge); color: var(--ink-soft); }
+
   .pgo {
-    flex: none; padding: 10px 20px; border-radius: 999px; font-weight: 600; font-size: .95rem; color: var(--ink);
-    text-decoration: none; border: 1px solid rgba(77,141,255,.7); background: rgba(77,141,255,.16);
-    transition: background .2s ease, transform .2s ease;
+    display: inline-block; padding: 6px 14px; border-radius: 999px;
+    font-weight: 600; font-size: .78rem; color: var(--ink); text-decoration: none;
+    border: 1px solid rgba(77,141,255,.7); background: rgba(77,141,255,.16);
+    transition: background .2s ease;
   }
-  .pgo:hover { background: rgba(77,141,255,.4); transform: translateY(-2px); }
-  @media (max-width: 640px) {
-    .prow { flex-direction: column; align-items: flex-start; gap: 16px; padding: 22px 4px; }
-    .pthumb { width: 88px; height: 88px; }
+  .pgo:hover { background: rgba(77,141,255,.4); }
+
+  .pgo.ghbtn {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-color: rgba(167,139,250,.65); background: rgba(167,139,250,.14);
+  }
+  .pgo.ghbtn:hover { background: rgba(167,139,250,.32); }
+  .pgo.ghbtn svg { width: 13px; height: 13px; flex: none; }
+
+  .pgo.demobtn {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-color: rgba(56,189,248,.65); background: rgba(56,189,248,.14);
+  }
+  .pgo.demobtn:hover { background: rgba(56,189,248,.32); }
+  .pgo.demobtn svg { width: 11px; height: 11px; flex: none; }
+
+  @media (max-width: 560px) {
+    .prow-preview { display: none; }
+    .pbody { padding-left: 15px; }
+  }
+
+  /* ---- SwapQR hero callout ---- */
+  .proj-hero {
+    display: flex; align-items: center; gap: 16px; margin: 22px 0 26px; padding: 18px 20px;
+    border-radius: 16px; position: relative; overflow: hidden;
+    background: linear-gradient(120deg, rgba(251,191,36,.16), rgba(244,63,94,.1) 55%, rgba(6,13,36,0));
+    border: 1px solid rgba(251,191,36,.35);
+    animation: rowIn .5s cubic-bezier(.16,1,.3,1) backwards; animation-delay: 40ms;
+  }
+  .proj-hero-icon {
+    flex: none; width: 52px; height: 52px; border-radius: 13px; overflow: hidden;
+    box-shadow: 0 8px 22px -8px rgba(251,191,36,.55), 0 0 0 1px rgba(255,255,255,.08);
+    animation: vmFloat 2.6s ease-in-out infinite;
+  }
+  .proj-hero-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @keyframes vmFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @media (prefers-reduced-motion: reduce) { .proj-hero-icon { animation: none; } }
+
+  .proj-hero-text { flex: 1 1 auto; min-width: 0; }
+  .proj-hero-text h3 { margin: 0 0 3px; font-size: 1.02rem; font-weight: 800; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .proj-hero-text p { margin: 0; font-size: .82rem; line-height: 1.5; color: var(--ink-soft); max-width: 46ch; }
+
+  .proj-hero-cta {
+    flex: none; padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: .82rem;
+    font-family: 'JetBrains Mono', monospace; border: none; cursor: pointer; text-decoration: none;
+    background: linear-gradient(135deg, #fbbf24, #f43f5e); color: #2a0a05;
+    box-shadow: 0 6px 18px -6px rgba(251,191,36,.6); transition: transform .15s ease, box-shadow .15s ease;
+    display: inline-block;
+  }
+  .proj-hero-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 22px -6px rgba(251,191,36,.8); }
+
+  @media (max-width: 560px) {
+    .proj-hero { flex-wrap: wrap; }
+    .proj-hero-cta { width: 100%; text-align: center; }
   }
 </style>
+
 </head>
 <body class="plain">
 
@@ -51,21 +167,165 @@
 </nav>
 
 <main class="page" id="proj"><div>
-  <h2>projects</h2>
 
-  <!-- To add a project, copy one <li class="prow"> block and change the image, name, text and link. -->
-  <ul class="plist">
-    <li class="prow">
-      <div class="pthumb"><img src="swapqr-logo.jpg" alt="SwapQR logo"></div>
+  <div class="proj-head">
+    <h2>projects</h2>
+    <span class="proj-count">7 shipped — click a row to expand</span>
+  </div>
+
+  <div class="proj-hero">
+    <div class="proj-hero-icon"><img src="swapqr-logo.jpg" alt="SwapQR logo"></div>
+    <div class="proj-hero-text">
+      <h3>SwapQR <span class="pbadge">Coming to Google Play</span></h3>
+      <p>QR-based contact sharing — scan, save, done in under a second, zero manual typing. In closed testing now, launching soon on Google Play.</p>
+    </div>
+    <a class="proj-hero-cta" href="https://swapqrr.vercel.app/" target="_blank" rel="noopener">▸ Visit site</a>
+  </div>
+
+  <div class="pmanifest">
+
+    <details class="prow" style="--rc:#22c55e;--i:0">
+      <summary>
+        <span class="bracket tl"></span><span class="bracket br"></span>
+        <span class="prow-thumb">
+          <svg viewBox="0 0 112 112" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="ipgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22c55e"/><stop offset="1" stop-color="#0d9488"/></linearGradient></defs>
+            <rect width="112" height="112" fill="url(#ipgrad)"/>
+            <rect x="30" y="30" width="52" height="52" rx="8" fill="none" stroke="#fff" stroke-width="6" opacity="0.95"/>
+            <path d="M42 56 h28 M56 42 v28" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity="0.95"/>
+          </svg>
+        </span>
+        <span class="prow-name">InPlan</span>
+        <span class="pbadge release">GitHub release</span>
+        <span class="prow-preview">Kotlin · Compose · Supabase · Realtime</span>
+        <svg class="prow-chev" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
       <div class="pbody">
-        <h3>SwapQR</h3>
-        <p class="pdesc">An app that turns your contact details into a QR code. Others scan it to save your contact instantly, with no typing.</p>
-        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span></div>
+        <p class="pdesc">Group expense tracker for trips — Supabase-backed with Row Level Security scoping every read to trip membership, Realtime-propagated balances, and Splitwise-style debt-minimizing settlement that collapses an N-person trip's debts to at most N−1 transactions.</p>
+        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span><span>Supabase</span><span>Postgres</span><span>Realtime</span></div>
+        <a class="pgo ghbtn" href="https://github.com/curiousfalak/inplan/releases/tag/v1.0.0" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.17-.89-1.17-.72-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub release</a>
       </div>
-      <a class="pgo" href="https://swapqrr.vercel.app/" target="_blank" rel="noopener">Visit site</a>
-    </li>
-  </ul>
+    </details>
+
+    <details class="prow" style="--rc:#6366f1;--i:1">
+      <summary>
+        <span class="bracket tl"></span><span class="bracket br"></span>
+        <span class="prow-thumb">
+          <svg viewBox="0 0 112 112" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="sfgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs>
+            <rect width="112" height="112" fill="url(#sfgrad)"/>
+            <path d="M56 30 L84 54 L84 84 L64 84 L64 64 L48 64 L48 84 L28 84 L28 54 Z" fill="#fff" opacity="0.95"/>
+          </svg>
+        </span>
+        <span class="prow-name">StayFinder</span>
+        <span class="pbadge release">GitHub release</span>
+        <span class="prow-preview">Java 21 · Spring Boot · Redis · Elasticsearch</span>
+        <svg class="prow-chev" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="pbody">
+        <p class="pdesc">Per-listing distributed locks in Redis serialize concurrent booking attempts down to a single winner, layered over an Elasticsearch index spanning thousands of listings and an IP-scoped rate limiter capped at 100 req/min.</p>
+        <div class="stack"><span>Java 21</span><span>Spring Boot</span><span>PostgreSQL</span><span>Redis</span><span>Elasticsearch</span></div>
+        <a class="pgo ghbtn" href="https://github.com/curiousfalak/stayfinder/releases/tag/v1.0.0" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.17-.89-1.17-.72-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub release</a>
+      </div>
+    </details>
+
+    <details class="prow" style="--rc:#14b8a6;--i:2">
+      <summary>
+        <span class="bracket tl"></span><span class="bracket br"></span>
+        <span class="prow-thumb">
+          <svg viewBox="0 0 112 112" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="nlgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#0d9488"/></linearGradient></defs>
+            <rect width="112" height="112" fill="url(#nlgrad)"/>
+            <path d="M20 60 Q40 40 56 60 T92 60" stroke="#fff" stroke-width="6" fill="none" opacity="0.95"/>
+            <path d="M20 76 Q40 56 56 76 T92 76" stroke="#fff" stroke-width="6" fill="none" opacity="0.7"/>
+            <circle cx="68" cy="40" r="9" fill="#fff" opacity="0.95"/>
+          </svg>
+        </span>
+        <span class="prow-name">Nature Lens</span>
+        <span class="pbadge release">GitHub release</span>
+        <span class="prow-preview">Kotlin · TensorFlow Lite · CNN</span>
+        <svg class="prow-chev" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="pbody">
+        <p class="pdesc">On-device CNN classifier (TFLite) spanning 9 marine species, auto-geotagging each sighting and firing a local alert the moment a threatened species is logged.</p>
+        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span><span>TensorFlow Lite</span><span>CNN</span></div>
+        <a class="pgo ghbtn" href="https://github.com/curiousfalak/bitbox_bytecrafters/releases/tag/v1.0.0" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.17-.89-1.17-.72-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub release</a>
+      </div>
+    </details>
+
+    <details class="prow" style="--rc:#f97316;--i:3">
+      <summary>
+        <span class="bracket tl"></span><span class="bracket br"></span>
+        <span class="prow-thumb">
+          <svg viewBox="0 0 112 112" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="aagrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs>
+            <rect width="112" height="112" fill="url(#aagrad)"/>
+            <circle cx="56" cy="38" r="14" fill="#fff" opacity="0.95"/>
+            <path d="M32 88 Q56 58 80 88" stroke="#fff" stroke-width="7" fill="none" opacity="0.95" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="prow-name">Aarogya</span>
+        <span class="pbadge release">GitHub release</span>
+        <span class="prow-preview">Kotlin · MoveNet · FastAPI · Firebase</span>
+        <svg class="prow-chev" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="pbody">
+        <p class="pdesc">MoveNet + MediaPipe pose pipeline tracking 33 body landmarks per frame for real-time form correction, with biometric state synced live through the Fitbit and Wear OS APIs.</p>
+        <div class="stack"><span>Kotlin</span><span>TensorFlow Lite</span><span>MoveNet</span><span>FastAPI</span><span>Firebase</span></div>
+        <a class="pgo ghbtn" href="https://github.com/curiousfalak/Aarogya/releases/tag/v1.0.0" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.17-.89-1.17-.72-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub release</a>
+      </div>
+    </details>
+
+    <details class="prow" style="--rc:#a855f7;--i:4">
+      <summary>
+        <span class="bracket tl"></span><span class="bracket br"></span>
+        <span class="prow-thumb">
+          <svg viewBox="0 0 112 112" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="figrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a855f7"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+            <rect width="112" height="112" fill="url(#figrad)"/>
+            <circle cx="50" cy="48" r="18" fill="none" stroke="#fff" stroke-width="7" opacity="0.95"/>
+            <line x1="63" y1="61" x2="86" y2="84" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity="0.95"/>
+          </svg>
+        </span>
+        <span class="prow-name">FindIt</span>
+        <span class="pbadge release">GitHub release</span>
+        <span class="prow-preview">Kotlin · Compose · Node.js · Express · MySQL</span>
+        <svg class="prow-chev" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="pbody">
+        <p class="pdesc">Lost-and-found matching engine for campuses — every post is reduced to a 64-bit perceptual hash and compared by Hamming distance, so near-duplicate photos (different crop, lighting, angle) still resolve to the same item with zero manual tagging, turning a raw photo search into a ranked similarity list.</p>
+        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span><span>Node.js</span><span>Express</span><span>MySQL</span><span>Docker</span></div>
+        <a class="pgo ghbtn" href="https://github.com/inquisitivefiza/findit/releases/tag/v1.0.0" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.17-.89-1.17-.72-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub release</a>
+      </div>
+    </details>
+
+    <details class="prow" style="--rc:#38bdf8;--i:5">
+      <summary>
+        <span class="bracket tl"></span><span class="bracket br"></span>
+        <span class="prow-thumb">
+          <svg viewBox="0 0 112 112" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="nngrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+            <rect width="112" height="112" fill="url(#nngrad)"/>
+            <rect x="28" y="34" width="56" height="8" rx="4" fill="#fff" opacity="0.95"/>
+            <rect x="28" y="52" width="56" height="8" rx="4" fill="#fff" opacity="0.75"/>
+            <rect x="28" y="70" width="34" height="8" rx="4" fill="#fff" opacity="0.6"/>
+          </svg>
+        </span>
+        <span class="prow-name">NewsNest</span>
+        <span class="pbadge release">GitHub release</span>
+        <span class="prow-preview">Kotlin · Compose · Room · WorkManager · Hilt</span>
+        <svg class="prow-chev" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="pbody">
+        <p class="pdesc">Offline-first Android reader — Room is the single source of truth feeding a reactive Flow straight into Compose, zero blank-screen loads. WorkManager syncs 5 categories every 15 minutes on unmetered networks only; search runs client-side over the cache with a 300ms debounce, no extra API calls.</p>
+        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span><span>Clean Architecture</span><span>Room</span><span>WorkManager</span><span>Hilt</span></div>
+        <a class="pgo ghbtn" href="https://github.com/inquisitivefiza/NewsNest/releases/tag/v1.0.0" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.22.48-2.69-1.07-2.69-1.07-.36-.93-.89-1.17-.89-1.17-.72-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub release</a>
+      </div>
+    </details>
+
+  </div>
 </div></main>
+
 
 <script>
 (() => {
@@ -79,7 +339,16 @@
   addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
   // "projects" is this page, so just close the menu
   document.querySelector('.pill[href="projects.html"]').addEventListener('click', e => { e.preventDefault(); set(false); });
+
+  // only one manifest row open at a time, for a tidier scan
+  document.querySelectorAll('.prow').forEach(row => {
+    row.addEventListener('toggle', () => {
+      if (!row.open) return;
+      document.querySelectorAll('.prow').forEach(o => { if (o !== row) o.open = false; });
+    });
+  });
 })();
+
 </script>
 </body>
 </html>
